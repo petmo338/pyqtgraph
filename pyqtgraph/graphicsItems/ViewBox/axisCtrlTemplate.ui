@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>186</width>
-    <height>154</height>
+    <width>200</width>
+    <height>157</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -26,14 +26,14 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="7" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Link Axis:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="2" colspan="2">
+   <item row="8" column="2" colspan="2">
     <widget class="QComboBox" name="linkCombo">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Links this axis with another view. When linked, both views will display the same data range.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -111,7 +111,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="4">
+   <item row="6" column="0" colspan="4">
     <widget class="QCheckBox" name="invertCheck">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inverts the display of this axis. (+y points downward instead of upward)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -121,7 +121,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="4">
+   <item row="7" column="0" colspan="4">
     <widget class="QCheckBox" name="mouseCheck">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables mouse interaction (panning, scaling) for this axis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -147,10 +147,24 @@
    <item row="4" column="2" colspan="2">
     <widget class="QCheckBox" name="autoPanCheck">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the axis will automatically pan to center on the current data, but the scale along this axis will not change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, only the latest number of samples indicated in '# samples' will be visible in the plot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
-      <string>Auto Pan Only</string>
+      <string>Show only N last samples</string>
+     </property>
+    </widget>
+   </item>
+    <item row="5" column="2" colspan="2">
+    <widget class="QLineEdit" name="windowsizeText">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of last samples that are visible on the x-axis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLabel" name="label2">
+     <property name="text">
+      <string># samples shown</string>
      </property>
     </widget>
    </item>

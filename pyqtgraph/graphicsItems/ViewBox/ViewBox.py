@@ -147,7 +147,7 @@ class ViewBox(GraphicsWidget):
             'aspectLocked': False,    ## False if aspect is unlocked, otherwise float specifies the locked ratio.
             'autoRange': [True, True],  ## False if auto range is disabled, 
                                           ## otherwise float gives the fraction of data that is visible
-            'autoPan': [False, False],         ## whether to only pan (do not change scaling) when auto-range is enabled
+            'autoPan': [True, False],         ## whether to only pan (do not change scaling) when auto-range is enabled
             'autoVisibleOnly': [False, False], ## whether to auto-range only to the visible portion of a plot 
             'linkedViews': [None, None],  ## may be None, "viewName", or weakref.ref(view)
                                           ## a name string indicates that the view *should* link to another, but no view with that name exists yet.
@@ -158,6 +158,8 @@ class ViewBox(GraphicsWidget):
             'wheelScaleFactor': -1.0 / 8.0,
 
             'background': None,
+            
+            'autoPanWindowSize': 50,
             
             # Limits
             'limits': {
@@ -387,6 +389,10 @@ class ViewBox(GraphicsWidget):
     def setMenuEnabled(self, enableMenu=True):
         self.state['enableMenu'] = enableMenu
         self.sigStateChanged.emit(self)
+        
+    def setAutoPanWindowSize(self, windowSize):
+        self.state['autoPanWindowSize'] = windowSize
+        self.sigStateChanged.emit(self)        
 
     def menuEnabled(self):
         return self.state.get('enableMenu', True)       
@@ -888,12 +894,14 @@ class ViewBox(GraphicsWidget):
                 ## Make corrections to range
                 xr = childRange[ax]
                 if xr is not None:
+                    padding = self.suggestPadding(ax)
                     if self.state['autoPan'][ax]:
-                        x = sum(xr) * 0.5
-                        w2 = (targetRect[ax][1]-targetRect[ax][0]) / 2.
-                        childRange[ax] = [x-w2, x+w2]
+                        wp = self.state['autoPanWindowSize'] * padding
+                        #x = sum(xr) * 0.5
+                        #w2 = (targetRect[ax][1]-targetRect[ax][0]) / 2.
+                        childRange[ax][0] = max(xr[0], xr[1] - self.state['autoPanWindowSize'])
+                        childRange[ax][1] += wp
                     else:
-                        padding = self.suggestPadding(ax)
                         wp = (xr[1] - xr[0]) * padding
                         childRange[ax][0] -= wp
                         childRange[ax][1] += wp
@@ -1251,30 +1259,31 @@ class ViewBox(GraphicsWidget):
             mask[1-axis] = 0.0
 
         ## Scale or translate based on mouse button
-        if ev.button() & (QtCore.Qt.LeftButton | QtCore.Qt.MidButton):
-            if self.state['mouseMode'] == ViewBox.RectMode:
-                if ev.isFinish():  ## This is the final move in the drag; change the view scale now
-                    #print "finish"
-                    self.rbScaleBox.hide()
-                    #ax = QtCore.QRectF(Point(self.pressPos), Point(self.mousePos))
-                    ax = QtCore.QRectF(Point(ev.buttonDownPos(ev.button())), Point(pos))
-                    ax = self.childGroup.mapRectFromParent(ax)
-                    self.showAxRect(ax)
-                    self.axHistoryPointer += 1
-                    self.axHistory = self.axHistory[:self.axHistoryPointer] + [ax]
-                else:
-                    ## update shape of scale box
-                    self.updateScaleBox(ev.buttonDownPos(), ev.pos())
+#        if ev.button() & (QtCore.Qt.LeftButton | QtCore.Qt.MidButton):
+#            if self.state['mouseMode'] == ViewBox.RectMode:
+        if ev.button() & QtCore.Qt.LeftButton:
+            if ev.isFinish():  ## This is the final move in the drag; change the view scale now
+                #print "finish"
+                self.rbScaleBox.hide()
+                #ax = QtCore.QRectF(Point(self.pressPos), Point(self.mousePos))
+                ax = QtCore.QRectF(Point(ev.buttonDownPos(ev.button())), Point(pos))
+                ax = self.childGroup.mapRectFromParent(ax)
+                self.showAxRect(ax)
+                self.axHistoryPointer += 1
+                self.axHistory = self.axHistory[:self.axHistoryPointer] + [ax]
             else:
-                tr = dif*mask
-                tr = self.mapToView(tr) - self.mapToView(Point(0,0))
-                x = tr.x() if mask[0] == 1 else None
-                y = tr.y() if mask[1] == 1 else None
-                
-                self._resetTarget()
-                if x is not None or y is not None:
-                    self.translateBy(x=x, y=y)
-                self.sigRangeChangedManually.emit(self.state['mouseEnabled'])
+                ## update shape of scale box
+                self.updateScaleBox(ev.buttonDownPos(), ev.pos())
+        elif ev.button() & QtCore.Qt.MidButton:
+            tr = dif*mask
+            tr = self.mapToView(tr) - self.mapToView(Point(0,0))
+            x = tr.x() if mask[0] == 1 else None
+            y = tr.y() if mask[1] == 1 else None
+            
+            self._resetTarget()
+            if x is not None or y is not None:
+                self.translateBy(x=x, y=y)
+            self.sigRangeChangedManually.emit(self.state['mouseEnabled'])
         elif ev.button() & QtCore.Qt.RightButton:
             #print "vb.rightDrag"
             if self.state['aspectLocked'] is not False:

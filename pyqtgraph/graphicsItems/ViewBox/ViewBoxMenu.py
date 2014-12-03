@@ -9,6 +9,8 @@ else:
 
 import weakref 
 
+DEFAULT_AUTOPAN_WINDOW_SIZE = '4000'
+
 class ViewBoxMenu(QtGui.QMenu):
     def __init__(self, view):
         QtGui.QMenu.__init__(self)
@@ -58,31 +60,37 @@ class ViewBoxMenu(QtGui.QMenu):
 
         self.ctrl[0].invertCheck.toggled.connect(self.xInvertToggled)
         self.ctrl[1].invertCheck.toggled.connect(self.yInvertToggled)
+        self.ctrl[1].windowsizeText.hide()
+        self.ctrl[1].autoPanCheck.hide()
+        self.ctrl[1].label2.hide()
+        self.ctrl[0].windowsizeText.editingFinished.connect(self.windowsizeTextChanged)
+        self.ctrl[0].windowsizeText.setText(DEFAULT_AUTOPAN_WINDOW_SIZE)
+        
         ## exporting is handled by GraphicsScene now
         #self.export = QtGui.QMenu("Export")
         #self.setExportMethods(view.exportMethods)
         #self.addMenu(self.export)
         
-        self.leftMenu = QtGui.QMenu("Mouse Mode")
-        group = QtGui.QActionGroup(self)
-        
-        # This does not work! QAction _must_ be initialized with a permanent 
-        # object as the parent or else it may be collected prematurely.
-        #pan = self.leftMenu.addAction("3 button", self.set3ButtonMode)
-        #zoom = self.leftMenu.addAction("1 button", self.set1ButtonMode)
-        pan = QtGui.QAction("3 button", self.leftMenu)
-        zoom = QtGui.QAction("1 button", self.leftMenu)
-        self.leftMenu.addAction(pan)
-        self.leftMenu.addAction(zoom)
-        pan.triggered.connect(self.set3ButtonMode)
-        zoom.triggered.connect(self.set1ButtonMode)
-        
-        pan.setCheckable(True)
-        zoom.setCheckable(True)
-        pan.setActionGroup(group)
-        zoom.setActionGroup(group)
-        self.mouseModes = [pan, zoom]
-        self.addMenu(self.leftMenu)
+        #self.leftMenu = QtGui.QMenu("Mouse Mode")
+        #group = QtGui.QActionGroup(self)
+        #
+        ## This does not work! QAction _must_ be initialized with a permanent 
+        ## object as the parent or else it may be collected prematurely.
+        ##pan = self.leftMenu.addAction("3 button", self.set3ButtonMode)
+        ##zoom = self.leftMenu.addAction("1 button", self.set1ButtonMode)
+        #pan = QtGui.QAction("3 button", self.leftMenu)
+        #zoom = QtGui.QAction("1 button", self.leftMenu)
+        #self.leftMenu.addAction(pan)
+        #self.leftMenu.addAction(zoom)
+        #pan.triggered.connect(self.set3ButtonMode)
+        #zoom.triggered.connect(self.set1ButtonMode)
+        #
+        #pan.setCheckable(True)
+        #zoom.setCheckable(True)
+        #pan.setActionGroup(group)
+        #zoom.setActionGroup(group)
+        #self.mouseModes = [pan, zoom]
+        #self.addMenu(self.leftMenu)
         
         self.view().sigStateChanged.connect(self.viewStateChanged)
         
@@ -104,10 +112,10 @@ class ViewBoxMenu(QtGui.QMenu):
         ## Something about the viewbox has changed; update the menu GUI
         
         state = self.view().getState(copy=False)
-        if state['mouseMode'] == ViewBox.PanMode:
-            self.mouseModes[0].setChecked(True)
-        else:
-            self.mouseModes[1].setChecked(True)
+        #if state['mouseMode'] == ViewBox.PanMode:
+        #    self.mouseModes[0].setChecked(True)
+        #else:
+        #    self.mouseModes[1].setChecked(True)
             
         for i in [0,1]:  # x, y
             tr = state['targetRange'][i]
@@ -179,6 +187,7 @@ class ViewBoxMenu(QtGui.QMenu):
 
     def xAutoPanToggled(self, b):
         self.view().setAutoPan(x=b)
+        self.view().setAutoPanWindowSize(int(self.ctrl[0].windowsizeText.text()))
     
     def xVisibleOnlyToggled(self, b):
         self.view().setAutoVisible(x=b)
@@ -220,6 +229,10 @@ class ViewBoxMenu(QtGui.QMenu):
 
     def xInvertToggled(self, b):
         self.view().invertX(b)
+
+    def windowsizeTextChanged(self):
+        self.ctrl[0].autoPanCheck.setChecked(True)
+        self.view().setAutoPanWindowSize(int(self.ctrl[0].windowsizeText.text()))
 
     def exportMethod(self):
         act = self.sender()

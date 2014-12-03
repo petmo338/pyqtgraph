@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file './pyqtgraph/graphicsItems/ViewBox/axisCtrlTemplate.ui'
 #
-# Created: Mon Dec 23 10:10:51 2013
-#      by: pyside-uic 0.2.14 running on PySide 1.1.2
+# Created: Wed Dec  3 19:18:14 2014
+#      by: pyside-uic 0.2.14 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(186, 154)
+        Form.resize(200, 157)
         Form.setMaximumSize(QtCore.QSize(200, 16777215))
         self.gridLayout = QtGui.QGridLayout(Form)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -20,11 +20,11 @@ class Ui_Form(object):
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtGui.QLabel(Form)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 7, 0, 1, 2)
+        self.gridLayout.addWidget(self.label, 8, 0, 1, 2)
         self.linkCombo = QtGui.QComboBox(Form)
         self.linkCombo.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
         self.linkCombo.setObjectName("linkCombo")
-        self.gridLayout.addWidget(self.linkCombo, 7, 2, 1, 2)
+        self.gridLayout.addWidget(self.linkCombo, 8, 2, 1, 2)
         self.autoPercentSpin = QtGui.QSpinBox(Form)
         self.autoPercentSpin.setEnabled(True)
         self.autoPercentSpin.setMinimum(1)
@@ -48,17 +48,23 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.maxText, 1, 3, 1, 1)
         self.invertCheck = QtGui.QCheckBox(Form)
         self.invertCheck.setObjectName("invertCheck")
-        self.gridLayout.addWidget(self.invertCheck, 5, 0, 1, 4)
+        self.gridLayout.addWidget(self.invertCheck, 6, 0, 1, 4)
         self.mouseCheck = QtGui.QCheckBox(Form)
         self.mouseCheck.setChecked(True)
         self.mouseCheck.setObjectName("mouseCheck")
-        self.gridLayout.addWidget(self.mouseCheck, 6, 0, 1, 4)
+        self.gridLayout.addWidget(self.mouseCheck, 7, 0, 1, 4)
         self.visibleOnlyCheck = QtGui.QCheckBox(Form)
         self.visibleOnlyCheck.setObjectName("visibleOnlyCheck")
         self.gridLayout.addWidget(self.visibleOnlyCheck, 3, 2, 1, 2)
         self.autoPanCheck = QtGui.QCheckBox(Form)
         self.autoPanCheck.setObjectName("autoPanCheck")
         self.gridLayout.addWidget(self.autoPanCheck, 4, 2, 1, 2)
+        self.windowsizeText = QtGui.QLineEdit(Form)
+        self.windowsizeText.setObjectName("windowsizeText")
+        self.gridLayout.addWidget(self.windowsizeText, 5, 2, 1, 2)
+        self.label2 = QtGui.QLabel(Form)
+        self.label2.setObjectName("label2")
+        self.gridLayout.addWidget(self.label2, 5, 1, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -83,6 +89,8 @@ class Ui_Form(object):
         self.mouseCheck.setText(QtGui.QApplication.translate("Form", "Mouse Enabled", None, QtGui.QApplication.UnicodeUTF8))
         self.visibleOnlyCheck.setToolTip(QtGui.QApplication.translate("Form", "<html><head/><body><p>When checked, the axis will only auto-scale to data that is visible along the orthogonal axis.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.visibleOnlyCheck.setText(QtGui.QApplication.translate("Form", "Visible Data Only", None, QtGui.QApplication.UnicodeUTF8))
-        self.autoPanCheck.setToolTip(QtGui.QApplication.translate("Form", "<html><head/><body><p>When checked, the axis will automatically pan to center on the current data, but the scale along this axis will not change.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.autoPanCheck.setText(QtGui.QApplication.translate("Form", "Auto Pan Only", None, QtGui.QApplication.UnicodeUTF8))
+        self.autoPanCheck.setToolTip(QtGui.QApplication.translate("Form", "<html><head/><body><p>When checked, only the latest number of samples indicated in \'# samples\' will be visible in the plot.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.autoPanCheck.setText(QtGui.QApplication.translate("Form", "Show only N last samples", None, QtGui.QApplication.UnicodeUTF8))
+        self.windowsizeText.setToolTip(QtGui.QApplication.translate("Form", "<html><head/><body><p>Number of last samples that are visible on the x-axis.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label2.setText(QtGui.QApplication.translate("Form", "# samples shown", None, QtGui.QApplication.UnicodeUTF8))
 
