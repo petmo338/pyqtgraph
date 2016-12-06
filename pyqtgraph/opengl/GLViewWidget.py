@@ -1,4 +1,4 @@
-from ..Qt import QtCore, QtGui, QtOpenGL
+from ..Qt import QtCore, QtGui, QtOpenGL, USE_PYQT5
 from OpenGL.GL import *
 import OpenGL.GL.framebufferobjects as glfbo
 import numpy as np
@@ -72,9 +72,9 @@ class GLViewWidget(QtOpenGL.QGLWidget):
     def setBackgroundColor(self, *args, **kwds):
         """
         Set the background color of the widget. Accepts the same arguments as
-        pg.mkColor().
+        pg.mkColor() and pg.glColor().
         """
-        self.opts['bgcolor'] = fn.mkColor(*args, **kwds)
+        self.opts['bgcolor'] = fn.glColor(*args, **kwds)
         self.update()
         
     def getViewport(self):
@@ -159,7 +159,6 @@ class GLViewWidget(QtOpenGL.QGLWidget):
             
         items = [(h.near, h.names[0]) for h in hits]
         items.sort(key=lambda i: i[0])
-        
         return [self._itemNames[i[1]] for i in items]
     
     def paintGL(self, region=None, viewport=None, useItemNames=False):
@@ -175,7 +174,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
         self.setProjection(region=region)
         self.setModelview()
         bgcolor = self.opts['bgcolor']
-        glClearColor(bgcolor.red(), bgcolor.green(), bgcolor.blue(), 1.0)
+        glClearColor(*bgcolor)
         glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT )
         self.drawItemTree(useItemNames=useItemNames)
         
@@ -193,8 +192,8 @@ class GLViewWidget(QtOpenGL.QGLWidget):
                 try:
                     glPushAttrib(GL_ALL_ATTRIB_BITS)
                     if useItemNames:
-                        glLoadName(id(i))
-                        self._itemNames[id(i)] = i
+                        glLoadName(i._id)
+                        self._itemNames[i._id] = i
                     i.paint()
                 except:
                     from .. import debug
@@ -325,10 +324,17 @@ class GLViewWidget(QtOpenGL.QGLWidget):
         
         
     def wheelEvent(self, ev):
-        if (ev.modifiers() & QtCore.Qt.ControlModifier):
-            self.opts['fov'] *= 0.999**ev.delta()
+        delta = 0
+        if not USE_PYQT5:
+            delta = ev.delta()
         else:
-            self.opts['distance'] *= 0.999**ev.delta()
+            delta = ev.angleDelta().x()
+            if delta == 0:
+                delta = ev.angleDelta().y()
+        if (ev.modifiers() & QtCore.Qt.ControlModifier):
+            self.opts['fov'] *= 0.999**delta
+        else:
+            self.opts['distance'] *= 0.999**delta
         self.update()
 
     def keyPressEvent(self, ev):
